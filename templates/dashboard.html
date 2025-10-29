@@ -1,0 +1,2500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmailScope Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .dashboard-header .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        
+        .scrape-form {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+        
+        .scrape-form:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-warning {
+            border: 2px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        .btn-outline-warning:hover {
+            background: var(--warning-color);
+            transform: translateY(-1px);
+        }
+        
+        .results-table {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+        
+        .results-table:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .table tbody tr {
+            transition: var(--transition);
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+        }
+        
+        .table tbody td {
+            vertical-align: middle;
+            border-color: #e9ecef;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .badge.bg-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        }
+        
+        .badge.bg-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+        }
+        
+        .badge.bg-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%) !important;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+        
+        .progress-bar {
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        
+        .progress-bar.bg-success {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .progress-bar.bg-warning {
+            background: linear-gradient(90deg, #ffc107 0%, #fd7e14 100%);
+        }
+        
+        .progress-bar.bg-danger {
+            background: linear-gradient(90deg, #dc3545 0%, #e83e8c 100%);
+        }
+        
+        .progress-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Enhanced Progress Bar Styles */
+        .progress-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .progress-container .progress {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-container .progress-bar {
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.6s ease;
+        }
+        
+        /* Completion State Styles */
+        .completion-state {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 1rem;
+            animation: completionSlideIn 0.5s ease-out;
+        }
+        
+        .completion-message {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #155724;
+            margin-bottom: 0.5rem;
+        }
+        
+        .completion-stats {
+            color: #6c757d;
+        }
+        
+        @keyframes completionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes completionFadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+        
+        .completion-state.fade-out {
+            animation: completionFadeOut 0.5s ease-in forwards;
+        }
+        
+        /* Bulk Scraping Styles */
+        .bulk-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .bulk-upload-area:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        
+        .bulk-upload-area.dragover {
+            border-color: #007bff;
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+        
+        .upload-content {
+            pointer-events: auto;
+        }
+        
+        #upload-btn {
+            pointer-events: auto;
+            cursor: pointer;
+            z-index: 10;
+            position: relative;
+        }
+        
+        #upload-btn:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .file-info {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .bulk-progress-header {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .bulk-stats {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .stat-item {
+            padding: 0.5rem;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .progress-info {
+            background: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-info i {
+            color: var(--primary-color);
+        }
+        
+        /* Step-specific progress bar colors */
+        .progress-bar.step-crawling {
+            background: linear-gradient(90deg, #17a2b8 0%, #20c997 100%);
+        }
+        
+        .progress-bar.step-extracting {
+            background: linear-gradient(90deg, #ffc107 0%, #fd7e14 100%);
+        }
+        
+        .progress-bar.step-verifying {
+            background: linear-gradient(90deg, #6f42c1 0%, #e83e8c 100%);
+        }
+        
+        .progress-bar.step-complete {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-spinner {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3rem;
+        }
+        
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9998;
+            min-width: 300px;
+        }
+        
+        .toast {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .toast-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+        }
+        
+        .toast-body {
+            padding: 1rem;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .search-box .form-control {
+            padding-left: 2.5rem;
+        }
+        
+        .search-box .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        
+        .results-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .results-table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .results-table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .results-table-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        .results-table-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .scroll-indicator.show {
+            opacity: 1;
+        }
+        
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+        }
+        
+        .confidence-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .confidence-high { background: #28a745; }
+        .confidence-medium { background: #ffc107; }
+        .confidence-low { background: #dc3545; }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .scraping-active .loading-spinner {
+            display: inline-block;
+        }
+        
+        .scraping-active .scrape-btn {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        /* Disabled component styles */
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6 !important;
+            cursor: not-allowed !important;
+        }
+        
+        .scraping-active .form-control:disabled,
+        .scraping-active .btn:disabled,
+        .scraping-active .form-select:disabled {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .scraping-active .form-control:disabled::placeholder {
+            color: #adb5bd;
+        }
+        
+        /* Visual indicator for scraping state - only on form controls */
+        .scraping-active .scrape-form {
+            position: relative;
+        }
+        
+        .scraping-active .scrape-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: var(--border-radius);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Keep results table and logs fully interactive during scraping */
+        .scraping-active .results-table .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+        }
+        
+        .table-responsive {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .email-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .domain-cell {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .timestamp-cell {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="header-title mb-0">
+                        <i class="fas fa-envelope-open-text me-3"></i>
+                        EmailScope Dashboard
+                    </h1>
+                    <p class="header-subtitle mb-0 mt-2">Discover and verify company emails from public websites</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="d-flex align-items-center justify-content-end">
+                        <div class="me-3">
+                            <small class="text-light opacity-75">Status:</small>
+                            <span id="status-badge" class="badge bg-light text-dark">Ready</span>
+                        </div>
+                        <div>
+                            <small class="text-light opacity-75">Results:</small>
+                            <span id="results-count" class="badge bg-light text-dark">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="container">
+        <!-- Bulk Scraping Section -->
+        <div class="results-table mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-file-upload me-2"></i>Bulk Scraping
+                </h5>
+                <small class="text-muted">Upload CSV/Excel file with domains</small>
+            </div>
+            
+            <div class="bulk-upload-area" id="bulk-upload-area">
+                <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                    <h6>Upload Domain List</h6>
+                    <p class="text-muted mb-3">Upload a CSV or Excel file containing domains to scrape</p>
+                    <input type="file" id="bulk-file-input" accept=".csv,.xlsx,.xls" style="display: none;">
+                    <button class="btn btn-outline-primary" id="upload-btn" onclick="console.log('Upload button clicked'); document.getElementById('bulk-file-input').click();">
+                        <i class="fas fa-upload me-1"></i>Choose File
+                    </button>
+                </div>
+            </div>
+            
+            <div id="bulk-file-info" class="file-info mt-3" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-file-csv text-success me-2"></i>
+                        <span id="file-name">filename.csv</span>
+                        <small class="text-muted ms-2" id="file-size">(2.5 KB)</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-info me-2" id="domain-count">5 domains</span>
+                        <button class="btn btn-sm btn-success" id="start-bulk-scraping">
+                            <i class="fas fa-play me-1"></i>Start Bulk Scraping
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary ms-2" id="clear-bulk-file">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bulk Progress -->
+            <div id="bulk-progress-section" class="mt-3" style="display: none;">
+                <div class="bulk-progress-header">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">
+                            <i class="fas fa-tasks me-2"></i>Bulk Scraping Progress
+                        </h6>
+                        <div>
+                            <span class="badge bg-primary me-2" id="bulk-current-domain">Domain 1 of 5</span>
+                            <button class="btn btn-sm btn-warning" id="pause-bulk-scraping">
+                                <i class="fas fa-pause me-1"></i>Pause
+                            </button>
+                            <button class="btn btn-sm btn-danger ms-2" id="stop-bulk-scraping">
+                                <i class="fas fa-stop me-1"></i>Stop
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress mb-2" style="height: 20px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         id="bulk-progress-bar" 
+                         role="progressbar" 
+                         style="width: 0%"
+                         aria-valuenow="0" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        <span class="progress-text">Starting...</span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <small class="text-muted">
+                            <i class="fas fa-globe me-1"></i>
+                            <span id="bulk-current-domain-name">Preparing...</span>
+                        </small>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            <span id="bulk-elapsed-time">00:00</span>
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="bulk-stats mt-2">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <div class="stat-item">
+                                <div class="stat-number" id="bulk-completed-domains">0</div>
+                                <div class="stat-label">Completed</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stat-item">
+                                <div class="stat-number" id="bulk-total-emails">0</div>
+                                <div class="stat-label">Emails Found</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stat-item">
+                                <div class="stat-number" id="bulk-success-rate">0%</div>
+                                <div class="stat-label">Success Rate</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stat-item">
+                                <div class="stat-number" id="bulk-remaining">0</div>
+                                <div class="stat-label">Remaining</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Domain Scraping -->
+        <!-- Scrape Form -->
+        <div class="scrape-form">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="domain-input" class="form-label">
+                            <i class="fas fa-globe me-2"></i>Domain to Scrape
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="domain-input" 
+                               placeholder="Enter domain (e.g., example.com)" required>
+                        <div class="form-text">Enter a company domain to discover their email addresses</div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="scrape-btn" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-search me-2"></i>
+                        <span class="btn-text">Start Scraping</span>
+                        <div class="loading-spinner">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </button>
+                    <button id="stop-btn" class="btn btn-danger btn-lg w-100 ms-2" style="display: none;">
+                        <i class="fas fa-stop me-2"></i>
+                        <span class="btn-text">Stop Scraping</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <button id="clear-btn" class="btn btn-outline-secondary">
+                        <i class="fas fa-trash me-2"></i>Clear Results
+                    </button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button id="export-btn" class="btn btn-outline-success">
+                        <i class="fas fa-download me-2"></i>Export CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scraping Progress -->
+        <div class="results-table mb-3" id="progress-container" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-tasks me-2"></i>Scraping Progress
+                </h5>
+                <small class="text-muted" id="progress-status">Ready to start</small>
+            </div>
+            <div class="progress-container">
+                <div class="progress mb-3" style="height: 25px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         id="main-progress-bar" 
+                         role="progressbar" 
+                         style="width: 0%"
+                         aria-valuenow="0" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        <span class="progress-text">Ready to start...</span>
+                    </div>
+                </div>
+                
+                <!-- Completion State (hidden by default) -->
+                <div id="completion-state" class="completion-state" style="display: none;">
+                    <div class="completion-message">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <span class="completion-text">Scraping Completed Successfully!</span>
+                    </div>
+                    <div class="completion-stats">
+                        <small class="text-muted">
+                            <span id="completion-email-count">0</span> emails found • 
+                            <span id="completion-time">0</span> seconds
+                        </small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="progress-info">
+                            <small class="text-muted">
+                                <i class="fas fa-globe me-1"></i>
+                                <span id="current-step-text">Step 1: Crawling</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="progress-info">
+                            <small class="text-muted">
+                                <i class="fas fa-percentage me-1"></i>
+                                <span id="progress-percentage">0%</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="progress-info">
+                            <small class="text-muted">
+                                <i class="fas fa-envelope me-1"></i>
+                                <span id="email-progress">0 emails processed</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="progress-info">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                <span id="elapsed-time">00:00</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Log -->
+        <div class="results-table mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-terminal me-2"></i>Scraping Log
+                </h5>
+                <small class="text-muted" id="log-count">0 messages</small>
+            </div>
+            <div id="scraping-log" class="bg-dark text-light p-3 rounded" style="height: 200px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                <div class="text-muted">Waiting for scraping to start...</div>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="results-table">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="mb-0">
+                        <i class="fas fa-table me-2"></i>Discovered Emails
+                    </h5>
+                    <small class="text-muted" id="email-count">0 emails found</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <button id="clean-btn" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-broom me-1"></i>Clean Data
+                    </button>
+                    <select id="filter-status" class="form-select form-select-sm">
+                        <option value="">All Status</option>
+                        <option value="verified">Verified</option>
+                        <option value="unverified">Unverified</option>
+                    </select>
+                    <select id="filter-domain" class="form-select form-select-sm">
+                        <option value="">All Domains</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Search and Filter Section -->
+            <div class="search-box mb-3">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control" id="search-input" placeholder="Search emails, domains, or reasons...">
+            </div>
+            
+            
+            <div class="results-table-container">
+                <table class="table table-hover mb-0" id="results-table">
+                    <thead class="table-dark sticky-top">
+                        <tr>
+                            <th>Domain</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Confidence</th>
+                            <th>Reason</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                        <tr id="no-results">
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-3"></i>
+                                <br>No emails discovered yet. Enter a domain and click "Start Scraping" to begin.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="scroll-indicator" id="scroll-indicator">
+                    <i class="fas fa-arrow-down me-1"></i>Scroll to see more
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-3">
+                <h5>Processing...</h5>
+                <p class="text-muted">Please wait while we process your request</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-toast" id="notification-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class EmailScopeDashboard {
+            constructor() {
+                this.results = [];
+                this.isScraping = false;
+                this.logs = [];
+                this.stats = {};
+                this.notifications = [];
+            this.scrapingStartTime = null;
+            this.progressInterval = null;
+            
+            // Bulk scraping properties
+            this.bulkDomains = [];
+            this.bulkCurrentIndex = 0;
+            this.bulkIsRunning = false;
+            this.bulkIsPaused = false;
+            this.bulkStartTime = null;
+            this.bulkProgressInterval = null;
+            this.bulkResults = [];
+                this.keyboardShortcuts = {
+                    'Enter': () => this.startScraping(),
+                    'Escape': () => this.stopScraping(),
+                    'F5': () => this.refreshResults(),
+                    'Ctrl+r': () => this.refreshResults(),
+                    'Ctrl+s': () => this.exportCSV(),
+                    'Ctrl+c': () => this.clearResults()
+                };
+                this.init();
+            }
+            
+            init() {
+                console.log('Initializing dashboard...');
+                console.log('DOM ready state:', document.readyState);
+                console.log('no-results element exists:', !!document.getElementById('no-results'));
+                console.log('bulk-file-input element exists:', !!document.getElementById('bulk-file-input'));
+                console.log('bulk-upload-area element exists:', !!document.getElementById('bulk-upload-area'));
+                
+                this.bindEvents();
+                this.updateStatus();
+                this.clearLogOnReload();
+                this.refreshDataOnReload();
+                this.setupScrollIndicator();
+                this.setupKeyboardShortcuts();
+                this.setupNotifications();
+                this.setupAutoSave();
+                this.setupDataValidation();
+                this.setupSearch();
+            }
+            
+            bindEvents() {
+                // Single domain scraping events
+                const scrapeBtn = document.getElementById('scrape-btn');
+                if (scrapeBtn) scrapeBtn.addEventListener('click', () => this.startScraping());
+                
+                const stopBtn = document.getElementById('stop-btn');
+                if (stopBtn) stopBtn.addEventListener('click', () => this.stopScraping());
+                
+                const clearBtn = document.getElementById('clear-btn');
+                if (clearBtn) clearBtn.addEventListener('click', () => this.clearResults());
+                
+                const exportBtn = document.getElementById('export-btn');
+                if (exportBtn) exportBtn.addEventListener('click', () => this.exportCSV());
+                
+                const cleanBtn = document.getElementById('clean-btn');
+                if (cleanBtn) cleanBtn.addEventListener('click', () => this.cleanLowConfidenceData());
+                
+                const filterStatus = document.getElementById('filter-status');
+                if (filterStatus) filterStatus.addEventListener('change', () => this.filterResults());
+                
+                const filterDomain = document.getElementById('filter-domain');
+                if (filterDomain) filterDomain.addEventListener('change', () => this.filterResults());
+                
+                // Bulk scraping events
+                const bulkFileInput = document.getElementById('bulk-file-input');
+                if (bulkFileInput) {
+                    bulkFileInput.addEventListener('change', (e) => this.handleFileUpload(e));
+                }
+                
+                const startBulkBtn = document.getElementById('start-bulk-scraping');
+                if (startBulkBtn) startBulkBtn.addEventListener('click', () => this.startBulkScraping());
+                
+                const clearBulkBtn = document.getElementById('clear-bulk-file');
+                if (clearBulkBtn) clearBulkBtn.addEventListener('click', () => this.clearBulkFile());
+                
+                const pauseBulkBtn = document.getElementById('pause-bulk-scraping');
+                if (pauseBulkBtn) pauseBulkBtn.addEventListener('click', () => this.toggleBulkPause());
+                
+                const stopBulkBtn = document.getElementById('stop-bulk-scraping');
+                if (stopBulkBtn) stopBulkBtn.addEventListener('click', () => this.stopBulkScraping());
+                
+                // Drag and drop for bulk upload
+                const uploadArea = document.getElementById('bulk-upload-area');
+                if (uploadArea) {
+                    uploadArea.addEventListener('dragover', (e) => this.handleDragOver(e));
+                    uploadArea.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+                    uploadArea.addEventListener('drop', (e) => this.handleDrop(e));
+                }
+                
+                // Backup upload button event listener
+                const uploadBtn = document.getElementById('upload-btn');
+                if (uploadBtn) {
+                    uploadBtn.addEventListener('click', (e) => {
+                        console.log('Upload button clicked via event listener');
+                        const fileInput = document.getElementById('bulk-file-input');
+                        if (fileInput) {
+                            fileInput.click();
+                        } else {
+                            console.error('File input not found');
+                        }
+                    });
+                }
+                
+                // Enter key support
+                const domainInput = document.getElementById('domain-input');
+                if (domainInput) {
+                    domainInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            this.startScraping();
+                        }
+                    });
+                }
+            }
+            
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    const key = e.key;
+                    const ctrlKey = e.ctrlKey || e.metaKey;
+                    const shortcut = ctrlKey ? `Ctrl+${key.toLowerCase()}` : key;
+                    
+                    if (this.keyboardShortcuts[shortcut]) {
+                        e.preventDefault();
+                        this.keyboardShortcuts[shortcut]();
+                    }
+                });
+            }
+            
+            setupNotifications() {
+                // Create notification container if it doesn't exist
+                if (!document.getElementById('notification-container')) {
+                    const container = document.createElement('div');
+                    container.id = 'notification-container';
+                    container.className = 'position-fixed top-0 end-0 p-3';
+                    container.style.zIndex = '9999';
+                    document.body.appendChild(container);
+                }
+            }
+            
+            showNotification(message, type = 'info', duration = 3000) {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type} alert-dismissible fade show`;
+                notification.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                container.appendChild(notification);
+                
+                // Auto-remove after duration
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, duration);
+            }
+            
+            setupAutoSave() {
+                // Auto-save form data to localStorage
+                const domainInput = document.getElementById('domain-input');
+                if (domainInput) {
+                    // Load saved domain
+                    const savedDomain = localStorage.getItem('emailscope_domain');
+                    if (savedDomain) {
+                        domainInput.value = savedDomain;
+                    }
+                    
+                    // Save on input change
+                    domainInput.addEventListener('input', (e) => {
+                        localStorage.setItem('emailscope_domain', e.target.value);
+                    });
+                }
+            }
+            
+            setupDataValidation() {
+                const domainInput = document.getElementById('domain-input');
+                if (domainInput) {
+                    domainInput.addEventListener('input', (e) => {
+                        this.validateDomain(e.target.value);
+                    });
+                }
+            }
+            
+            validateDomain(domain) {
+                const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?(\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?)*$/;
+                const isValid = domainRegex.test(domain);
+                
+                const input = document.getElementById('domain-input');
+                if (domain && !isValid) {
+                    input.classList.add('is-invalid');
+                    this.showNotification('Invalid domain format', 'warning');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+                
+                return isValid;
+            }
+            
+            
+            setupScrollIndicator() {
+                const container = document.querySelector('.results-table-container');
+                const indicator = document.getElementById('scroll-indicator');
+                
+                if (!container || !indicator) return;
+                
+                container.addEventListener('scroll', () => {
+                    const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 10;
+                    const hasScrollableContent = container.scrollHeight > container.clientHeight;
+                    
+                    if (hasScrollableContent && !isAtBottom) {
+                        indicator.classList.add('show');
+                    } else {
+                        indicator.classList.remove('show');
+                    }
+                });
+            }
+            
+            async startScraping() {
+                const domain = document.getElementById('domain-input').value.trim();
+                if (!domain) {
+                    this.showNotification('Please enter a domain', 'warning');
+                    return;
+                }
+                
+                if (!this.validateDomain(domain)) {
+                    this.showNotification('Invalid domain format', 'error');
+                    return;
+                }
+                
+                if (this.isScraping) {
+                    this.showNotification('Scraping is already in progress', 'warning');
+                    return;
+                }
+                
+                this.isScraping = true;
+                console.log('isScraping set to true, calling updateUI');
+                this.updateUI();
+                this.showLoadingOverlay();
+                
+                try {
+                        const response = await fetch('/scraper/api/scrape', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ domain: domain })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        if (data.status === 'started') {
+                            this.showNotification('Scraping started successfully', 'success');
+                            this.hideLoadingOverlay();
+                            this.pollStatus();
+                        } else {
+                            this.showNotification('Error: ' + data.error, 'error');
+                            this.isScraping = false;
+                            this.updateUI();
+                            this.hideLoadingOverlay();
+                        }
+                    } else {
+                        this.showNotification('Error: ' + data.error, 'error');
+                        this.isScraping = false;
+                        this.updateUI();
+                        this.hideLoadingOverlay();
+                    }
+                } catch (error) {
+                    this.showNotification('Error starting scraping: ' + error.message, 'error');
+                    this.isScraping = false;
+                    this.updateUI();
+                    this.hideLoadingOverlay();
+                }
+            }
+            
+            async stopScraping() {
+                if (!this.isScraping) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/scraper/api/stop', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        this.isScraping = false;
+                        this.updateUI();
+                        this.enableInteractiveComponents();
+                        this._addLogMessage('[STOP] Scraping stopped by user');
+                        this.showNotification('Scraping stopped', 'info');
+                    }
+                } catch (error) {
+                    this.showNotification('Error stopping scraping: ' + error.message, 'error');
+                }
+            }
+            
+            async pollStatus() {
+                const poll = async () => {
+                    try {
+                        const response = await fetch('/scraper/api/status');
+                        const data = await response.json();
+                        
+                        console.log('Status check:', data.status, 'Results count:', data.results_count);
+                        
+                        if (data.status === 'completed' || data.status === 'error' || data.status === 'stopped') {
+                            console.log('Scraping completed/stopped, stopping polling');
+                            this.isScraping = false;
+                            this.updateUI();
+                            this.enableInteractiveComponents();
+                            this.loadResults();
+                            
+                            // If status is error, reset backend status after a delay
+                            if (data.status === 'error') {
+                                setTimeout(() => {
+                                    this.resetBackendStatus();
+                                }, 2000);
+                            }
+                            return;
+                        }
+                        
+                        if (data.status === 'scraping') {
+                            this.loadLogs(); // Load logs during scraping
+                            setTimeout(poll, 1000); // Poll every 1 second for real-time updates
+                        } else if (data.status === 'idle' && this.isScraping) {
+                            // Handle case where status was reset to idle while we were scraping
+                            console.log('Status reset to idle, assuming completion');
+                            this.isScraping = false;
+                            this.updateUI();
+                            this.enableInteractiveComponents();
+                            this.loadResults();
+                        }
+                    } catch (error) {
+                        console.error('Error polling status:', error);
+                        this.isScraping = false;
+                        this.updateUI();
+                        this.enableInteractiveComponents();
+                    }
+                };
+                
+                poll();
+            }
+            
+            async loadResults() {
+                try {
+                    const response = await fetch('/scraper/api/results');
+                    const data = await response.json();
+                    this.results = data;
+                    this.updateTable();
+                    this.updateStatus();
+                    this.updateDomainFilter();
+                } catch (error) {
+                    console.error('Error loading results:', error);
+                }
+            }
+            
+            async refreshDataOnReload() {
+                // Refresh all data when page loads/reloads
+                try {
+                    await this.loadResults();
+                    await this.loadLogs();
+                    this.updateStatus();
+                    console.log('Data refreshed on page reload');
+                } catch (error) {
+                    console.error('Error refreshing data on reload:', error);
+                }
+            }
+            
+            async resetBackendStatus() {
+                // Reset backend status to idle after error
+                try {
+                    console.log('Resetting backend status to idle');
+                    const response = await fetch('/scraper/api/reset-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        console.log('Backend status reset successfully');
+                    } else {
+                        console.error('Failed to reset backend status');
+                    }
+                } catch (error) {
+                    console.error('Error resetting backend status:', error);
+                }
+            }
+            
+            // Bulk Scraping Methods
+            handleFileUpload(event) {
+                console.log('File upload triggered:', event);
+                const file = event.target.files[0];
+                console.log('Selected file:', file);
+                if (file) {
+                    this.processFile(file);
+                } else {
+                    console.log('No file selected');
+                }
+            }
+            
+            handleDragOver(event) {
+                event.preventDefault();
+                event.currentTarget.classList.add('dragover');
+            }
+            
+            handleDragLeave(event) {
+                event.preventDefault();
+                event.currentTarget.classList.remove('dragover');
+            }
+            
+            handleDrop(event) {
+                event.preventDefault();
+                event.currentTarget.classList.remove('dragover');
+                
+                const files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    this.processFile(files[0]);
+                }
+            }
+            
+            async processFile(file) {
+                try {
+                    console.log('Processing file:', file.name);
+                    
+                    // Validate file type
+                    const validTypes = ['.csv', '.xlsx', '.xls'];
+                    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                    
+                    if (!validTypes.includes(fileExtension)) {
+                        this.showNotification('Please upload a CSV or Excel file', 'error');
+                        return;
+                    }
+                    
+                    // Parse file based on type
+                    let domains = [];
+                    if (fileExtension === '.csv') {
+                        domains = await this.parseCSV(file);
+                    } else {
+                        domains = await this.parseExcel(file);
+                    }
+                    
+                    if (domains.length === 0) {
+                        this.showNotification('No valid domains found in file', 'error');
+                        return;
+                    }
+                    
+                    // Store domains and show file info
+                    this.bulkDomains = domains;
+                    this.showFileInfo(file, domains.length);
+                    
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    this.showNotification('Error processing file: ' + error.message, 'error');
+                }
+            }
+            
+            async parseCSV(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const text = e.target.result;
+                            const lines = text.split('\n');
+                            const domains = [];
+                            
+                            for (let line of lines) {
+                                line = line.trim();
+                                if (line && !line.startsWith('#')) {
+                                    // Extract domain from CSV line (first column)
+                                    const domain = line.split(',')[0].trim().replace(/['"]/g, '');
+                                    if (this.isValidDomain(domain)) {
+                                        domains.push(domain);
+                                    }
+                                }
+                            }
+                            
+                            resolve(domains);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsText(file);
+                });
+            }
+            
+            async parseExcel(file) {
+                // For now, we'll use a simple approach - in a real implementation,
+                // you'd use a library like SheetJS to parse Excel files
+                this.showNotification('Excel parsing not implemented yet. Please use CSV format.', 'warning');
+                return [];
+            }
+            
+            isValidDomain(domain) {
+                // Simple domain validation
+                const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.([a-zA-Z]{2,}|[a-zA-Z]{2,}\.[a-zA-Z]{2,})$/;
+                return domainRegex.test(domain) && domain.length > 3 && domain.length < 255;
+            }
+            
+            showFileInfo(file, domainCount) {
+                const fileInfo = document.getElementById('bulk-file-info');
+                const fileName = document.getElementById('file-name');
+                const fileSize = document.getElementById('file-size');
+                const domainCountElement = document.getElementById('domain-count');
+                
+                fileName.textContent = file.name;
+                fileSize.textContent = `(${(file.size / 1024).toFixed(1)} KB)`;
+                domainCountElement.textContent = `${domainCount} domains`;
+                
+                fileInfo.style.display = 'block';
+            }
+            
+            clearBulkFile() {
+                this.bulkDomains = [];
+                this.bulkCurrentIndex = 0;
+                
+                document.getElementById('bulk-file-info').style.display = 'none';
+                document.getElementById('bulk-progress-section').style.display = 'none';
+                document.getElementById('bulk-file-input').value = '';
+                
+                this.showNotification('File cleared', 'info');
+            }
+            
+            async startBulkScraping() {
+                if (this.bulkDomains.length === 0) {
+                    this.showNotification('Please upload a file first', 'warning');
+                    return;
+                }
+                
+                if (this.bulkIsRunning) {
+                    this.showNotification('Bulk scraping is already running', 'warning');
+                    return;
+                }
+                
+                if (this.isScraping) {
+                    this.showNotification('Single domain scraping is in progress. Please wait for it to complete or stop it first.', 'warning');
+                    return;
+                }
+                
+                this.bulkIsRunning = true;
+                this.bulkIsPaused = false;
+                this.bulkCurrentIndex = 0;
+                this.bulkResults = [];
+                this.bulkStartTime = new Date();
+                
+                // Show progress section
+                document.getElementById('bulk-progress-section').style.display = 'block';
+                
+                // Start bulk scraping
+                this.processBulkDomains();
+            }
+            
+            async processBulkDomains() {
+                while (this.bulkCurrentIndex < this.bulkDomains.length && this.bulkIsRunning && !this.bulkIsPaused) {
+                    const domain = this.bulkDomains[this.bulkCurrentIndex];
+                    
+                    // Update UI
+                    this.updateBulkProgress();
+                    
+                    try {
+                        console.log(`Processing domain ${this.bulkCurrentIndex + 1}/${this.bulkDomains.length}: ${domain}`);
+                        
+                        // Scrape current domain
+                        await this.scrapeSingleDomain(domain);
+                        
+                        // Move to next domain
+                        this.bulkCurrentIndex++;
+                        
+                        // Delay between domains to avoid overwhelming the server
+                        console.log('Waiting 5 seconds before next domain...');
+                        await new Promise(resolve => setTimeout(resolve, 5000));
+                        
+                    } catch (error) {
+                        console.error(`Error scraping ${domain}:`, error);
+                        
+                        // Add error result
+                        this.bulkResults.push({
+                            domain: domain,
+                            emails: [],
+                            status: 'error',
+                            error: error.message,
+                            count: 0
+                        });
+                        
+                        // Move to next domain even on error
+                        this.bulkCurrentIndex++;
+                        
+                        // Show error notification
+                        this.showNotification(`Error scraping ${domain}: ${error.message}`, 'error');
+                    }
+                }
+                
+                // Check if completed
+                if (this.bulkCurrentIndex >= this.bulkDomains.length) {
+                    this.completeBulkScraping();
+                }
+            }
+            
+            async scrapeSingleDomain(domain) {
+                // Use the real scraping API instead of mock data
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        console.log(`Starting real scraping for domain: ${domain}`);
+                        
+                        // Wait for any existing scraping to complete
+                        while (this.isScraping) {
+                            console.log('Waiting for existing scraping to complete...');
+                            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+                        }
+                        
+                        // Set scraping flag to prevent concurrent requests
+                        this.isScraping = true;
+                        this.updateUI();
+                        
+                        // Call the real scraping API
+                        const response = await fetch('/scraper/api/scrape', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ domain: domain })
+                        });
+                        
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error(`API Error for ${domain}:`, errorText);
+                            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                        }
+                        
+                        const result = await response.json();
+                        console.log(`Scraping result for ${domain}:`, result);
+                        
+                        // Wait for scraping to complete by polling status
+                        await this.waitForScrapingCompletion();
+                        
+                        // Reload results to get the latest data
+                        await this.loadResults();
+                        
+                        // Get the results for this domain
+                        const domainResults = this.results.filter(r => r.domain === domain);
+                        
+                        this.bulkResults.push({
+                            domain: domain,
+                            emails: domainResults.map(r => r.email),
+                            status: 'completed',
+                            count: domainResults.length
+                        });
+                        
+                        console.log(`Completed scraping ${domain}: ${domainResults.length} emails found`);
+                        resolve();
+                        
+                    } catch (error) {
+                        console.error(`Error scraping ${domain}:`, error);
+                        this.bulkResults.push({
+                            domain: domain,
+                            emails: [],
+                            status: 'error',
+                            error: error.message,
+                            count: 0
+                        });
+                        // Don't reject - continue with next domain
+                        resolve();
+                    } finally {
+                        // Always reset the scraping flag
+                        this.isScraping = false;
+                        this.updateUI();
+                    }
+                });
+            }
+            
+            async waitForScrapingCompletion() {
+                return new Promise((resolve) => {
+                    const checkStatus = async () => {
+                        try {
+                            const response = await fetch('/scraper/api/status');
+                            const data = await response.json();
+                            
+                            if (data.status === 'idle' || data.status === 'completed' || data.status === 'error' || data.status === 'stopped') {
+                                console.log('Backend scraping completed, status:', data.status);
+                                resolve();
+                            } else {
+                                console.log('Backend still scraping, status:', data.status);
+                                setTimeout(checkStatus, 2000); // Check every 2 seconds
+                            }
+                        } catch (error) {
+                            console.error('Error checking status:', error);
+                            // If we can't check status, wait a bit and try again
+                            setTimeout(checkStatus, 3000);
+                        }
+                    };
+                    checkStatus();
+                });
+            }
+            
+            updateBulkProgress() {
+                const progress = (this.bulkCurrentIndex / this.bulkDomains.length) * 100;
+                const progressBar = document.getElementById('bulk-progress-bar');
+                const currentDomain = document.getElementById('bulk-current-domain');
+                const currentDomainName = document.getElementById('bulk-current-domain-name');
+                const elapsedTime = document.getElementById('bulk-elapsed-time');
+                
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.setAttribute('aria-valuenow', progress);
+                }
+                
+                if (currentDomain) {
+                    currentDomain.textContent = `Domain ${this.bulkCurrentIndex + 1} of ${this.bulkDomains.length}`;
+                }
+                
+                if (currentDomainName && this.bulkDomains[this.bulkCurrentIndex]) {
+                    currentDomainName.textContent = this.bulkDomains[this.bulkCurrentIndex];
+                }
+                
+                if (elapsedTime && this.bulkStartTime) {
+                    const elapsed = Math.floor((new Date() - this.bulkStartTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    elapsedTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+                
+                // Update stats
+                this.updateBulkStats();
+            }
+            
+            updateBulkStats() {
+                const completedDomains = document.getElementById('bulk-completed-domains');
+                const totalEmails = document.getElementById('bulk-total-emails');
+                const successRate = document.getElementById('bulk-success-rate');
+                const remaining = document.getElementById('bulk-remaining');
+                
+                if (completedDomains) {
+                    completedDomains.textContent = this.bulkCurrentIndex;
+                }
+                
+                if (totalEmails) {
+                    const total = this.bulkResults.reduce((sum, result) => sum + result.emails.length, 0);
+                    totalEmails.textContent = total;
+                }
+                
+                if (successRate) {
+                    const successCount = this.bulkResults.filter(r => r.status === 'completed').length;
+                    const rate = this.bulkCurrentIndex > 0 ? Math.round((successCount / this.bulkCurrentIndex) * 100) : 0;
+                    successRate.textContent = `${rate}%`;
+                }
+                
+                if (remaining) {
+                    remaining.textContent = this.bulkDomains.length - this.bulkCurrentIndex;
+                }
+            }
+            
+            toggleBulkPause() {
+                this.bulkIsPaused = !this.bulkIsPaused;
+                const pauseBtn = document.getElementById('pause-bulk-scraping');
+                
+                if (this.bulkIsPaused) {
+                    pauseBtn.innerHTML = '<i class="fas fa-play me-1"></i>Resume';
+                    pauseBtn.className = 'btn btn-sm btn-success';
+                    this.showNotification('Bulk scraping paused', 'info');
+                } else {
+                    pauseBtn.innerHTML = '<i class="fas fa-pause me-1"></i>Pause';
+                    pauseBtn.className = 'btn btn-sm btn-warning';
+                    this.showNotification('Bulk scraping resumed', 'info');
+                    this.processBulkDomains();
+                }
+            }
+            
+            stopBulkScraping() {
+                this.bulkIsRunning = false;
+                this.bulkIsPaused = false;
+                this.isScraping = false; // Reset scraping flag
+                
+                // Hide progress section
+                document.getElementById('bulk-progress-section').style.display = 'none';
+                
+                // Update UI
+                this.updateUI();
+                
+                this.showNotification('Bulk scraping stopped', 'warning');
+            }
+            
+            completeBulkScraping() {
+                this.bulkIsRunning = false;
+                this.bulkIsPaused = false;
+                this.isScraping = false; // Reset scraping flag
+                
+                // Hide progress section
+                document.getElementById('bulk-progress-section').style.display = 'none';
+                
+                // Update UI
+                this.updateUI();
+                
+                // Update main results with bulk results
+                this.mergeBulkResults();
+                
+                // Show completion notification
+                this.showNotification('Bulk scraping completed!', 'success');
+            }
+            
+            mergeBulkResults() {
+                console.log('Merging bulk results into main results');
+                
+                // The results should already be in this.results from the real scraping
+                // Just update the table display
+                this.updateTable();
+                
+                // Show completion notification with real counts
+                const totalEmails = this.results.length;
+                const bulkDomains = this.bulkDomains.length;
+                const successCount = this.bulkResults.filter(r => r.status === 'completed').length;
+                
+                this.showNotification(
+                    `Bulk scraping completed! Found ${totalEmails} emails from ${successCount}/${bulkDomains} domains`, 
+                    'success'
+                );
+                
+                console.log(`Bulk scraping completed: ${totalEmails} total emails from ${bulkDomains} domains`);
+            }
+            
+            async cleanLowConfidenceData() {
+                try {
+                    // Count low confidence emails first
+                    const lowConfidenceEmails = this.results.filter(email => email.confidence < 30);
+                    const count = lowConfidenceEmails.length;
+                    
+                    if (count === 0) {
+                        this.showNotification('No emails with confidence less than 30% found.', 'info');
+                        return;
+                    }
+                    
+                    // Confirm deletion with enhanced dialog
+                    const confirmed = confirm(
+                        `Found ${count} emails with confidence less than 30%.\n\n` +
+                        `This will permanently delete these emails from the database.\n\n` +
+                        `Are you sure you want to proceed?`
+                    );
+                    
+                    if (!confirmed) {
+                        return;
+                    }
+                    
+                    // Show loading state
+                    const cleanBtn = document.getElementById('clean-btn');
+                    const originalText = cleanBtn.innerHTML;
+                    cleanBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Cleaning...';
+                    cleanBtn.disabled = true;
+                    
+                    // Call clean API
+                    const response = await fetch('/scraper/api/clean-low-confidence', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        this.showNotification(`Successfully cleaned ${result.removed_count} emails with low confidence.`, 'success');
+                        
+                        // Refresh the display
+                        await this.loadResults();
+                    } else {
+                        const error = await response.json();
+                        this.showNotification('Error cleaning data: ' + error.error, 'error');
+                    }
+                    
+                    // Reset button
+                    cleanBtn.innerHTML = originalText;
+                    cleanBtn.disabled = false;
+                    
+                } catch (error) {
+                    console.error('Error cleaning low confidence data:', error);
+                    this.showNotification('Error cleaning data: ' + error.message, 'error');
+                    
+                    // Reset button even on error
+                    const cleanBtn = document.getElementById('clean-btn');
+                    cleanBtn.innerHTML = '<i class="fas fa-broom me-1"></i>Clean Data';
+                    cleanBtn.disabled = false;
+                }
+            }
+            
+            async loadLogs() {
+                try {
+                    const response = await fetch('/scraper/api/logs');
+                    const data = await response.json();
+                    this.updateLogDisplay(data);
+                } catch (error) {
+                    console.error('Error loading logs:', error);
+                }
+            }
+            
+            clearLogOnReload() {
+                // Clear the log display when page loads/reloads
+                const logContainer = document.getElementById('scraping-log');
+                const logCount = document.getElementById('log-count');
+                
+                if (logContainer) {
+                    logContainer.innerHTML = '<div class="text-muted">Waiting for scraping to start...</div>';
+                }
+                
+                if (logCount) {
+                    logCount.textContent = '0 messages';
+                }
+                
+                // Clear the logs array
+                this.logs = [];
+            }
+            
+            updateLogDisplay(logs) {
+                const logContainer = document.getElementById('scraping-log');
+                const logCount = document.getElementById('log-count');
+                
+                if (logs.length === 0) {
+                    logContainer.innerHTML = '<div class="text-muted">Waiting for scraping to start...</div>';
+                    logCount.textContent = '0 messages';
+                    return;
+                }
+                
+                logCount.textContent = `${logs.length} messages`;
+                
+                const logHTML = logs.map(log => 
+                    `<div class="mb-1">
+                        <span class="text-info">[${log.timestamp}]</span> 
+                        <span class="text-light">${log.message}</span>
+                    </div>`
+                ).join('');
+                
+                logContainer.innerHTML = logHTML;
+                
+                // Auto-scroll to bottom
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+            
+            async clearResults() {
+                if (!confirm('Are you sure you want to clear all results?')) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/scraper/api/clear', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        this.results = [];
+                        this.updateTable();
+                        this.updateStatus();
+                        this.updateDomainFilter();
+                        this.loadLogs(); // Clear logs display
+                    }
+                } catch (error) {
+                    alert('Error clearing results: ' + error.message);
+                }
+            }
+            
+            
+            exportCSV() {
+                if (this.results.length === 0) {
+                    this.showNotification('No results to export', 'warning');
+                    return;
+                }
+                
+                try {
+                    const csv = this.generateCSV();
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `emailscope-results-${new Date().toISOString().split('T')[0]}.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    
+                    this.showNotification(`Exported ${this.results.length} results to CSV`, 'success');
+                } catch (error) {
+                    this.showNotification('Error exporting CSV: ' + error.message, 'error');
+                }
+            }
+            
+            generateCSV() {
+                const headers = ['Domain', 'Email', 'Status', 'Confidence', 'Reason', 'Timestamp'];
+                const rows = this.results.map(result => [
+                    result.domain,
+                    result.email,
+                    result.status,
+                    result.confidence,
+                    result.reason,
+                    result.timestamp
+                ]);
+                
+                return [headers, ...rows].map(row => 
+                    row.map(field => `"${field}"`).join(',')
+                ).join('\n');
+            }
+            
+            updateTable() {
+                const tbody = document.getElementById('results-tbody');
+                const noResults = document.getElementById('no-results');
+                const emailCount = document.getElementById('email-count');
+                
+                // Add null checks to prevent errors
+                if (!tbody || !emailCount) {
+                    console.error('Required DOM elements not found:', {
+                        tbody: !!tbody,
+                        noResults: !!noResults,
+                        emailCount: !!emailCount
+                    });
+                    return;
+                }
+                
+                // Only create no-results element if we actually have no results
+                if (!noResults && this.results.length === 0) {
+                    console.log('Creating no-results element for empty results');
+                    const noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'no-results';
+                    noResultsRow.innerHTML = `
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-3"></i>
+                            <br>No emails discovered yet. Enter a domain and click "Start Scraping" to begin.
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+                
+                // Update email count
+                const totalEmails = this.results.length;
+                const verifiedEmails = this.results.filter(r => r.status === 'verified').length;
+                
+                // Update email count
+                if (totalEmails > 0) {
+                    emailCount.textContent = `${totalEmails} emails found (${verifiedEmails} verified)`;
+                } else {
+                    emailCount.textContent = '0 emails found';
+                }
+                
+                console.log('Results check - length:', this.results.length, 'totalEmails:', totalEmails);
+                
+                if (this.results.length === 0) {
+                    const noResultsElement = document.getElementById('no-results');
+                    if (noResultsElement) {
+                        noResultsElement.style.display = '';
+                    }
+                    const scrollIndicator = document.getElementById('scroll-indicator');
+                    if (scrollIndicator) {
+                        scrollIndicator.classList.remove('show');
+                    }
+                    return;
+                }
+                
+                const noResultsElement = document.getElementById('no-results');
+                if (noResultsElement) {
+                    noResultsElement.style.display = 'none';
+                }
+                
+                const filteredResults = this.getFilteredResults();
+                
+                tbody.innerHTML = filteredResults.map(result => `
+                    <tr>
+                        <td class="domain-cell">${result.domain}</td>
+                        <td class="email-cell">${result.email}</td>
+                        <td>
+                            <span class="badge ${result.status === 'verified' ? 'bg-success' : 'bg-warning'} status-badge">
+                                ${result.status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="confidence-bar me-2" style="width: 60px;">
+                                    <div class="confidence-fill ${this.getConfidenceClass(result.confidence)}" 
+                                         style="width: ${result.confidence}%"></div>
+                                </div>
+                                <small>${result.confidence}%</small>
+                            </div>
+                        </td>
+                        <td><small class="text-muted">${result.reason}</small></td>
+                        <td class="timestamp-cell">${new Date(result.timestamp).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+                
+                // Auto-scroll to show new results if scraping is active
+                if (this.isScraping) {
+                    const container = document.querySelector('.results-table-container');
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }
+            }
+            
+            getFilteredResults() {
+                const statusFilter = document.getElementById('filter-status').value;
+                const domainFilter = document.getElementById('filter-domain').value;
+                
+                return this.results.filter(result => {
+                    if (statusFilter && result.status !== statusFilter) return false;
+                    if (domainFilter && result.domain !== domainFilter) return false;
+                    return true;
+                });
+            }
+            
+            filterResults() {
+                this.updateTable();
+            }
+            
+            getConfidenceClass(confidence) {
+                if (confidence >= 70) return 'confidence-high';
+                if (confidence >= 40) return 'confidence-medium';
+                return 'confidence-low';
+            }
+            
+            updateStatus() {
+                const statusBadge = document.getElementById('status-badge');
+                const resultsCount = document.getElementById('results-count');
+                
+                console.log('updateStatus called, isScraping:', this.isScraping);
+                
+                // Add null checks to prevent errors
+                if (!statusBadge || !resultsCount) {
+                    console.error('Required DOM elements not found in updateStatus:', {
+                        statusBadge: !!statusBadge,
+                        resultsCount: !!resultsCount
+                    });
+                    return;
+                }
+                
+                if (this.isScraping) {
+                    console.log('Setting status to scraping, showing progress bar');
+                    statusBadge.textContent = 'Processing emails...';
+                    statusBadge.className = 'badge bg-warning';
+                    this.showProgressBar();
+                    this.updateProgressBar(); // Start progress updates
+                } else {
+                    console.log('Setting status to ready, hiding progress bar');
+                    statusBadge.textContent = 'Ready';
+                    statusBadge.className = 'badge bg-success';
+                    this.hideProgressBar();
+                }
+                
+                resultsCount.textContent = this.results.length;
+            }
+            
+            showProgressBar() {
+                console.log('showProgressBar called');
+                const progressContainer = document.getElementById('progress-container');
+                const completionState = document.getElementById('completion-state');
+                console.log('Progress container found:', progressContainer);
+                
+                // Hide completion state when starting new scraping
+                if (completionState) {
+                    completionState.style.display = 'none';
+                    completionState.classList.remove('fade-out');
+                }
+                
+                if (progressContainer) {
+                    progressContainer.style.display = 'block';
+                    console.log('Progress bar shown');
+                    this.scrapingStartTime = new Date();
+                    this.startProgressTimer();
+                } else {
+                    console.error('Progress container not found!');
+                }
+            }
+            
+            hideProgressBar() {
+                const progressContainer = document.getElementById('progress-container');
+                if (progressContainer) {
+                    // Show completion state first
+                    this.showCompletionState();
+                    
+                    // Hide progress bar after showing completion
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        this.stopProgressTimer();
+                    }, 3000); // Show completion for 3 seconds
+                }
+            }
+            
+            showCompletionState() {
+                const completionState = document.getElementById('completion-state');
+                const completionEmailCount = document.getElementById('completion-email-count');
+                const completionTime = document.getElementById('completion-time');
+                
+                if (completionState && completionEmailCount && completionTime) {
+                    // Update completion stats
+                    completionEmailCount.textContent = this.results.length;
+                    
+                    // Calculate elapsed time
+                    if (this.scrapingStartTime) {
+                        const elapsed = Math.round((new Date() - this.scrapingStartTime) / 1000);
+                        completionTime.textContent = elapsed;
+                    } else {
+                        completionTime.textContent = '0';
+                    }
+                    
+                    // Show completion state
+                    completionState.style.display = 'block';
+                    
+                    // Add fade-out class after 2.5 seconds
+                    setTimeout(() => {
+                        completionState.classList.add('fade-out');
+                    }, 2500);
+                }
+            }
+            
+            startProgressTimer() {
+                this.progressInterval = setInterval(() => {
+                    this.updateElapsedTime();
+                }, 1000);
+            }
+            
+            stopProgressTimer() {
+                if (this.progressInterval) {
+                    clearInterval(this.progressInterval);
+                    this.progressInterval = null;
+                }
+            }
+            
+            updateElapsedTime() {
+                if (!this.scrapingStartTime) return;
+                
+                const elapsed = new Date() - this.scrapingStartTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                const elapsedTimeElement = document.getElementById('elapsed-time');
+                if (elapsedTimeElement) {
+                    elapsedTimeElement.textContent = timeString;
+                }
+            }
+            
+            async updateProgressBar() {
+                console.log('updateProgressBar called, isScraping:', this.isScraping);
+                if (!this.isScraping) return;
+                
+                try {
+                    console.log('Fetching progress from /api/progress');
+                    const response = await fetch('/scraper/api/progress');
+                    const data = await response.json();
+                    console.log('Progress data received:', data);
+                    
+                    if (data.progress) {
+                        const progress = data.progress;
+                        console.log('Updating progress display with:', progress);
+                        this.updateProgressDisplay(progress);
+                    }
+                } catch (error) {
+                    console.error('Error fetching progress:', error);
+                }
+                
+                // Continue updating if still scraping
+                if (this.isScraping) {
+                    setTimeout(() => this.updateProgressBar(), 1000);
+                }
+            }
+            
+            updateProgressDisplay(progress) {
+                const progressBar = document.getElementById('main-progress-bar');
+                const progressText = progressBar.querySelector('.progress-text');
+                const progressStatus = document.getElementById('progress-status');
+                const currentStepText = document.getElementById('current-step-text');
+                const progressPercentage = document.getElementById('progress-percentage');
+                const emailProgress = document.getElementById('email-progress');
+                
+                if (!progressBar) return;
+                
+                // Update progress bar width
+                progressBar.style.width = progress.current_progress + '%';
+                progressBar.setAttribute('aria-valuenow', progress.current_progress);
+                
+                // Update progress text
+                if (progress.current_step > 0 && progress.current_step <= progress.step_names.length) {
+                    const stepName = progress.step_names[progress.current_step - 1];
+                    let text = `${stepName} (${progress.current_progress}%)`;
+                    
+                    if (progress.current_step === 3 && progress.total_emails > 0) {
+                        text += ` - ${progress.processed_emails}/${progress.total_emails} emails`;
+                    }
+                    
+                    progressText.textContent = text;
+                }
+                
+                // Update step-specific styling
+                progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+                if (progress.current_step === 1) {
+                    progressBar.classList.add('step-crawling');
+                    progressStatus.textContent = 'Crawling website pages...';
+                } else if (progress.current_step === 2) {
+                    progressBar.classList.add('step-extracting');
+                    progressStatus.textContent = 'Extracting email addresses...';
+                } else if (progress.current_step === 3) {
+                    progressBar.classList.add('step-verifying');
+                    progressStatus.textContent = 'Verifying email addresses...';
+                } else if (progress.current_step === 4) {
+                    progressBar.classList.add('step-complete');
+                    progressStatus.textContent = 'Scraping completed!';
+                }
+                
+                // Update detailed progress info
+                if (currentStepText) {
+                    const stepName = progress.step_names[progress.current_step - 1] || 'Ready';
+                    currentStepText.textContent = `Step ${progress.current_step}: ${stepName}`;
+                }
+                
+                if (progressPercentage) {
+                    progressPercentage.textContent = `${progress.current_progress}%`;
+                }
+                
+                if (emailProgress) {
+                    if (progress.total_emails > 0) {
+                        emailProgress.textContent = `${progress.processed_emails}/${progress.total_emails} emails processed`;
+                    } else {
+                        emailProgress.textContent = '0 emails processed';
+                    }
+                }
+            }
+            
+            searchResults(query) {
+                if (!query) {
+                    this.updateTable();
+                    return;
+                }
+                
+                const filtered = this.results.filter(r => 
+                    r.email.toLowerCase().includes(query.toLowerCase()) ||
+                    r.domain.toLowerCase().includes(query.toLowerCase()) ||
+                    r.reason.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                this.updateTable(filtered);
+            }
+            
+            setupSearch() {
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.searchResults(e.target.value);
+                    });
+                }
+                
+            }
+            
+            
+            showLoadingOverlay() {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.classList.add('show');
+                }
+            }
+            
+            hideLoadingOverlay() {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.classList.remove('show');
+                }
+            }
+            
+            
+            updateDomainFilter() {
+                const domainFilter = document.getElementById('filter-domain');
+                
+                // Add null check to prevent errors
+                if (!domainFilter) {
+                    console.error('Domain filter element not found');
+                    return;
+                }
+                
+                const domains = [...new Set(this.results.map(r => r.domain))];
+                
+                domainFilter.innerHTML = '<option value="">All Domains</option>' +
+                    domains.map(domain => `<option value="${domain}">${domain}</option>`).join('');
+            }
+            
+            disableInteractiveComponents() {
+                // Disable only interactive control elements during scraping
+                // Keep viewing components (results table, logs, progress) enabled
+                const elementsToDisable = [
+                    'domain-input',      // Domain input field
+                    'clear-btn',         // Clear results button
+                    'export-btn',        // Export CSV button
+                    'clean-btn',         // Clean data button
+                    'filter-status',    // Status filter dropdown
+                    'filter-domain',    // Domain filter dropdown
+                    'search-input'      // Search input field
+                ];
+                
+                elementsToDisable.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.disabled = true;
+                        element.classList.add('disabled');
+                        element.style.opacity = '0.6';
+                        element.style.cursor = 'not-allowed';
+                    }
+                });
+                
+                // Add visual indicator that scraping is active
+                document.body.classList.add('scraping-active');
+                
+                // Keep these components enabled for viewing/interaction:
+                // - Results table (users can scroll and view results)
+                // - Log display (users can scroll and read logs)
+                // - Progress bar (users can see progress)
+                // - Stop button (users can still stop scraping)
+            }
+            
+            enableInteractiveComponents() {
+                // Re-enable interactive control elements after scraping
+                const elementsToEnable = [
+                    'domain-input',      // Domain input field
+                    'clear-btn',         // Clear results button
+                    'export-btn',        // Export CSV button
+                    'clean-btn',         // Clean data button
+                    'filter-status',    // Status filter dropdown
+                    'filter-domain',    // Domain filter dropdown
+                    'search-input'      // Search input field
+                ];
+                
+                elementsToEnable.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.disabled = false;
+                        element.classList.remove('disabled');
+                        element.style.opacity = '1';
+                        element.style.cursor = 'default';
+                    }
+                });
+                
+                // Remove visual indicator
+                document.body.classList.remove('scraping-active');
+            }
+            
+            updateUI() {
+                const scrapeBtn = document.getElementById('scrape-btn');
+                const stopBtn = document.getElementById('stop-btn');
+                const btnText = scrapeBtn.querySelector('.btn-text');
+                const loadingSpinner = scrapeBtn.querySelector('.loading-spinner');
+                
+                if (this.isScraping) {
+                    scrapeBtn.classList.add('scraping-active');
+                    btnText.textContent = 'Scraping...';
+                    scrapeBtn.style.display = 'none';
+                    stopBtn.style.display = 'block';
+                    this.disableInteractiveComponents();
+                } else {
+                    scrapeBtn.classList.remove('scraping-active');
+                    btnText.textContent = 'Start Scraping';
+                    scrapeBtn.style.display = 'block';
+                    stopBtn.style.display = 'none';
+                    this.enableInteractiveComponents();
+                }
+                
+                // Update status to show/hide progress bar
+                this.updateStatus();
+            }
+        }
+        
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded - Creating dashboard instance');
+            window.dashboard = new EmailScopeDashboard();
+            console.log('Dashboard instance created:', window.dashboard);
+        });
+        
+        // Backup initialization if DOM is already loaded
+        if (document.readyState === 'loading') {
+            console.log('DOM still loading, waiting for DOMContentLoaded');
+        } else {
+            console.log('DOM already loaded, initializing immediately');
+            if (!window.dashboard) {
+                window.dashboard = new EmailScopeDashboard();
+                console.log('Dashboard instance created (immediate):', window.dashboard);
+            }
+        }
+        
+        // Test function for debugging file upload
+        window.testFileUpload = function() {
+            console.log('Testing file upload...');
+            const fileInput = document.getElementById('bulk-file-input');
+            const uploadBtn = document.getElementById('upload-btn');
+            const uploadArea = document.getElementById('bulk-upload-area');
+            
+            console.log('File input exists:', !!fileInput);
+            console.log('Upload button exists:', !!uploadBtn);
+            console.log('Upload area exists:', !!uploadArea);
+            
+            if (fileInput) {
+                console.log('Triggering file input click...');
+                fileInput.click();
+            } else {
+                console.error('File input not found!');
+            }
+        };
+    </script>
+</body>
+</html>

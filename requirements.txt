@@ -1,0 +1,37 @@
+# EmailScope Dependencies - Render Optimized
+# Core web scraping and parsing
+requests==2.31.0
+beautifulsoup4==4.12.2
+
+# DNS resolution for email verification
+dnspython==2.4.2
+
+# Web dashboard
+flask==2.3.3
+werkzeug==2.3.7
+
+# Additional packages for better cloud compatibility
+urllib3==2.0.7
+certifi==2023.7.22
+charset-normalizer==3.3.2
+idna==3.4
+
+# Process management
+gunicorn==21.2.0
+waitress==2.1.2
+
+# Standard library modules (no additional installation needed):
+# - smtplib (built-in)
+# - re (built-in)
+# - csv (built-in)
+# - datetime (built-in)
+# - logging (built-in)
+# - pathlib (built-in)
+# - argparse (built-in)
+# - sys (built-in)
+# - time (built-in)
+# - socket (built-in)
+# - urllib.parse (built-in)
+# - typing (built-in)
+# - threading (built-in)
+# - json (built-in)
