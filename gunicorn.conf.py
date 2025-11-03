@@ -1,8 +1,10 @@
 # Cross-Platform Production Configuration for EmailScope
 # Automatically detects platform and uses appropriate WSGI server
 
+import os
+
 # Server socket
-bind = "0.0.0.0:5000"
+bind = f"0.0.0.0:{os.environ.get('PORT', 5000)}"
 backlog = 2048
 
 # Worker processes (Unix only - Waitress handles this differently)
